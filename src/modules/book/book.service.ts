@@ -7,6 +7,7 @@ import {
 } from '../../common/decorators/pagination.decorator';
 import { AuthorService } from '../author/author.service';
 import { CreateBookDto } from './dto/create-book.dto';
+import { FilterBookDto } from './dto/filter-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
 
@@ -29,14 +30,7 @@ export class BookService {
     return await this.findOne(savedBook.id);
   }
 
-  async findAll(
-    pagination: Pagination,
-    query: {
-      title?: string;
-      isbn?: string;
-      authorId?: number;
-    },
-  ) {
+  async findAll(pagination: Pagination, query: FilterBookDto) {
     const queryBuilder = this.bookRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.author', 'author');

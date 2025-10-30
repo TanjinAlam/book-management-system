@@ -12,6 +12,14 @@ export interface Pagination {
   offset: number;
 }
 
+export interface PaginatedResponse<T> {
+  item: T[];
+  total: number;
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+}
+
 export const PaginationParams = createParamDecorator(
   (data, ctx: ExecutionContext): Pagination => {
     const req: Request = ctx.switchToHttp().getRequest();
@@ -44,7 +52,7 @@ export function getPaginateData<T>(
   data: T[],
   count: number,
   pagination: Pagination,
-) {
+): PaginatedResponse<T> {
   return {
     item: data,
     total: count,

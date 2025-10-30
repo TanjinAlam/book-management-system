@@ -6,6 +6,7 @@ import {
   getPaginateData,
 } from '../../common/decorators/pagination.decorator';
 import { CreateAuthorDto } from './dto/create-author.dto';
+import { FilterAuthorDto } from './dto/filter-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 import { Author } from './entities/author.entity';
 
@@ -21,13 +22,7 @@ export class AuthorService {
     return await this.authorRepository.save(author);
   }
 
-  async findAll(
-    pagination: Pagination,
-    query: {
-      firstName?: string;
-      lastName?: string;
-    },
-  ) {
+  async findAll(pagination: Pagination, query: FilterAuthorDto) {
     const where: Record<string, unknown>[] = [];
     if (query.firstName) {
       where.push({ firstName: ILike(`%${query.firstName}%`) });

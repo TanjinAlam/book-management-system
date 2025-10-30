@@ -3,56 +3,62 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
-import type { Pagination } from '../../common/decorators/pagination.decorator';
+import type {
+  PaginatedResponse,
+  Pagination,
+} from '../../common/decorators/pagination.decorator';
 import { PaginationParams } from '../../common/decorators/pagination.decorator';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
+import { FilterBookDto } from './dto/filter-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { Book } from './entities/book.entity';
 
 @Controller('books')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Post()
-  async create(@Body() createBookDto: CreateBookDto) {
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createBookDto: CreateBookDto): Promise<Book> {
     return await this.bookService.create(createBookDto);
   }
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   async findAll(
     @PaginationParams() pagination: Pagination,
-    @Query('title') title?: string,
-    @Query('isbn') isbn?: string,
-    @Query('authorId', new ParseIntPipe({ optional: true })) authorId?: number,
-  ) {
-    return await this.bookService.findAll(pagination, {
-      title,
-      isbn,
-      authorId,
-    });
+    @Query() filterBookDto: FilterBookDto,
+  ): Promise<PaginatedResponse<Book>> {
+    return await this.bookService.findAll(pagination, filterBookDto);
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Book> {
     return await this.bookService.findOne(id);
   }
 
   @Patch(':id')
+  @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBookDto: UpdateBookDto,
-  ) {
+  ): Promise<Book> {
     return await this.bookService.update(id, updateBookDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  @HttpCode(HttpStatus.OK)
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<object> {
     await this.bookService.remove(id);
     return {};
   }
