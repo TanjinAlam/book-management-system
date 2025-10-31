@@ -1,5 +1,5 @@
-import { CustomBaseEntity } from 'src/common/entity/custom-base.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { CustomBaseEntity } from '../../../common/entity/custom-base.entity';
 import { Author } from '../../author/entities/author.entity';
 
 @Entity()
@@ -18,7 +18,7 @@ export class Book extends CustomBaseEntity {
 
   @ManyToOne(() => Author, (author) => author.books, {
     nullable: false,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'authorId' })
   author: Author;

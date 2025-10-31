@@ -57,9 +57,8 @@ export class BookController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<object> {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.bookService.remove(id);
-    return {};
   }
 }

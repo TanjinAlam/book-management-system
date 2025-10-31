@@ -1,98 +1,300 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Book Management System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A comprehensive NestJS-based book management system with TypeORM, PostgreSQL, and full CRUD operations for authors and books.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **Authors Management**: Create, read, update, delete authors
+- **Books Management**: Create, read, update, delete books with author relationships
+- **Pagination**: Custom pagination with configurable page size
+- **Validation**: Comprehensive input validation using class-validator
+- **Error Handling**: Custom exception filters with consistent error responses
+- **Soft Delete**: Books and authors support soft deletion
+- **Cascade Deletion**: Deleting an author automatically deletes all their books
+- **Testing**: Complete unit and e2e test coverage
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Prerequisites
 
-## Project setup
+Before running this application, make sure you have the following installed:
 
-```bash
-$ yarn install
-```
+- **Node.js** (v18 or higher)
+- **PostgreSQL** (v12 or higher)
+- **yarn** (package manager)
 
-## Compile and run the project
+## Installation
 
-```bash
-# development
-$ yarn run start
+1. **Clone the repository**
 
-# watch mode
-$ yarn run start:dev
+   ```bash
+   git clone <repository-url>
+   cd book-management-system
+   ```
 
-# production mode
-$ yarn run start:prod
-```
+2. **Install dependencies**
+   ```bash
+   yarn install
+   ```
 
-## Run tests
+## Environment Setup
+
+### 1. Copy Environment Files
 
 ```bash
-# unit tests
-$ yarn run test
+# For development
+cp .env.example .env
 
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+# For testing (recommended to use a separate database)
+cp .env.example .env.test
 ```
 
-## Deployment
+### 2. Configure Environment Variables
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+#### .env (Development)
 
 ```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
+NODE_ENV=development
+PORT=3000
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_password_here
+POSTGRES_DB=book_management_system
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+#### .env.test (Testing)
 
-## Resources
+```bash
+NODE_ENV=test
+PORT=3001
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_password_here
+POSTGRES_DB=book_management_system_test
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Database Setup
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### 1. Create PostgreSQL Databases
 
-## Support
+```sql
+-- Create development database
+CREATE DATABASE book_management_system;
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+-- Create test database (recommended separate database for testing)
+CREATE DATABASE book_management_system_test;
+```
 
-## Stay in touch
+### 2. Update Database Credentials
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Make sure your PostgreSQL user has the necessary permissions to create/drop tables and perform CRUD operations.
+
+## Running the Application
+
+### Development Mode
+
+```bash
+yarn start:dev
+```
+
+The application will start on `http://localhost:3000`
+
+### Production Mode
+
+```bash
+yarn build
+yarn start:prod
+```
+
+### Debug Mode
+
+```bash
+yarn start:debug
+```
+
+## Testing
+
+### Unit Tests
+
+Run all unit tests:
+
+```bash
+yarn test
+```
+
+Run specific unit test file:
+
+```bash
+yarn test -- author.service.spec.ts
+```
+
+Run tests with coverage:
+
+```bash
+yarn test:cov
+```
+
+Run tests in watch mode:
+
+```bash
+yarn test:watch
+```
+
+### End-to-End Tests
+
+Run all e2e tests:
+
+```bash
+yarn test:e2e
+```
+
+Run specific e2e test:
+
+```bash
+yarn test:e2e -- --testNamePattern="should delete author and cascade delete associated books"
+```
+
+Run e2e tests with specific pattern:
+
+```bash
+yarn test:e2e -- --testNamePattern="Author Deletion Cascade"
+```
+
+## API Endpoints
+
+### Authors
+
+- `GET /authors` - Get paginated list of authors
+- `GET /authors/:id` - Get single author by ID
+- `POST /authors` - Create new author
+- `PATCH /authors/:id` - Update author
+- `DELETE /authors/:id` - Delete author (cascades to books)
+
+### Books
+
+- `GET /books` - Get paginated list of books (with optional filters)
+- `GET /books/:id` - Get single book by ID
+- `POST /books` - Create new book
+- `PATCH /books/:id` - Update book
+- `DELETE /books/:id` - Delete book
+
+### Query Parameters
+
+#### Pagination
+
+- `page` (number, optional): Page number (default: 0)
+- `limit` (number, optional): Items per page (default: 10, max: 100)
+
+#### Book Filters
+
+- `title` (string, optional): Filter by book title (case-insensitive partial match)
+- `isbn` (string, optional): Filter by ISBN
+- `authorId` (number, optional): Filter by author ID
+
+## Project Structure
+
+```
+src/
+├── app.controller.ts          # Main application controller
+├── app.module.ts              # Main application module
+├── app.service.ts             # Main application service
+├── main.ts                    # Application entry point
+├── config/
+│   └── env.validation.ts      # Environment validation
+├── common/
+│   ├── decorators/
+│   │   └── pagination.decorator.ts  # Custom pagination decorator
+│   ├── entity/
+│   ├── filters/
+│   │   └── custom-exception.filter.ts  # Global exception filter
+│   ├── helpers/
+│   │   └── utils.helper.ts     # Utility functions
+│   ├── pipes/
+│   ├── utils/
+│   │   └── custome-message.ts  # Custom error messages
+│   └── guards/
+├── modules/
+│   ├── author/
+│   │   ├── author.controller.ts
+│   │   ├── author.service.ts
+│   │   ├── author.module.ts
+│   │   ├── dto/
+│   │   │   ├── create-author.dto.ts
+│   │   │   ├── update-author.dto.ts
+│   │   │   └── filter-author.dto.ts
+│   │   └── entities/
+│   │       └── author.entity.ts
+│   └── book/
+│       ├── book.controller.ts
+│       ├── book.service.ts
+│       ├── book.module.ts
+│       ├── dto/
+│       │   ├── create-book.dto.ts
+│       │   ├── update-book.dto.ts
+│       │   └── filter-book.dto.ts
+│       └── entities/
+│           └── book.entity.ts
+test/
+├── app.e2e-spec.ts           # End-to-end tests
+└── jest-e2e.json             # Jest e2e configuration
+```
+
+## Response Format
+
+All API responses follow a consistent format:
+
+### Success Response
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Success",
+  "data": { ... }
+}
+```
+
+### Error Response
+
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "message": "Book not found",
+  "error": "Book not found",
+  "path": "/books/123",
+  "method": "GET",
+  "timestamp": "2025-10-31T08:00:00.000Z"
+}
+```
+
+## Development Scripts
+
+- `yarn build` - Build the application
+- `yarn format` - Format code with Prettier
+- `yarn lint` - Run ESLint
+- `yarn test` - Run unit tests
+- `yarn test:cov` - Run tests with coverage
+- `yarn test:e2e` - Run e2e tests
+
+## Technologies Used
+
+- **NestJS** - Progressive Node.js framework
+- **TypeORM** - TypeScript ORM for database operations
+- **PostgreSQL** - Primary database
+- **class-validator** - Input validation
+- **class-transformer** - Object transformation
+- **Jest** - Testing framework
+- **Supertest** - HTTP endpoint testing
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `yarn test && yarn test:e2e`
+5. Submit a pull request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the UNLICENSED license.

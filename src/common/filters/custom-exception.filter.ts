@@ -9,6 +9,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm';
+import { NotFoundWhileDeleteException } from '../helpers/utils.helper';
 
 interface ErrorResponse {
   success: boolean;
@@ -46,7 +47,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
-    this.logger.error('Exception caught:', exception);
+    // this.logger.error('Exception caught:', exception); // Uncomment when needed to log exceptions
 
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
@@ -61,7 +62,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // Handle TypeORM QueryFailedError (includes unique constraint violations)
     if (exception instanceof QueryFailedError) {
       const pgError = exception.driverError as PostgresError;
-
       // PostgreSQL unique constraint violation
       if (pgError.code === '23505') {
         statusCode = HttpStatus.CONFLICT;
@@ -157,13 +157,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
           error = responseObj.error || exception.message;
         }
       }
-    }
-    // Handle standard Error objects
-    else if (exception instanceof Error) {
+    } else if (exception instanceof NotFoundWhileDeleteException) {
+      message = exception.message;
+      error = exception.message;
+      statusCode = HttpStatus.NOT_FOUND; // 404
+    } else if (exception instanceof Error) {
       message = exception.message;
       error = exception.message;
     }
-    // Handle unknown errors
+    // Handle delete request with custom message
     else {
       message = 'An unexpected error occurred';
       error = typeof exception === 'string' ? exception : 'Unknown error';

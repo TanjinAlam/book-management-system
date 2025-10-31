@@ -12,8 +12,8 @@ import {
   Query,
 } from '@nestjs/common';
 import type {
-  Pagination,
   PaginatedResponse,
+  Pagination,
 } from '../../common/decorators/pagination.decorator';
 import { PaginationParams } from '../../common/decorators/pagination.decorator';
 import { AuthorService } from './author.service';
@@ -57,9 +57,8 @@ export class AuthorController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.ACCEPTED)
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<object> {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.authorService.remove(id);
-    return {};
   }
 }

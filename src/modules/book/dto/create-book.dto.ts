@@ -1,21 +1,25 @@
+import { Transform } from 'class-transformer';
 import {
   IsDateString,
   IsISBN,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
+  MaxLength,
 } from 'class-validator';
 
 export class CreateBookDto {
   @IsString({ message: 'title must be a string' })
   @IsNotEmpty({ message: 'title is required' })
+  @MaxLength(255, { message: 'title must not exceed 255 characters' })
   title: string;
 
   @IsISBN(undefined, {
     message: 'isbn must be a valid ISBN format (e.g., 978-3-16-148410-0)',
   })
   @IsNotEmpty({ message: 'isbn is required' })
+  @MaxLength(255, { message: 'isbn must not exceed 255 characters' })
   isbn: string;
 
   @IsDateString(
@@ -28,11 +32,13 @@ export class CreateBookDto {
   @IsOptional()
   publishedDate?: string;
 
-  @IsString({ message: 'genre must be a string' })
   @IsOptional()
+  @IsString({ message: 'genre must be a string' })
+  @MaxLength(100, { message: 'genre must not exceed 100 characters' })
   genre?: string;
 
-  @IsNumber({}, { message: 'authorId must be a number' })
+  @IsPositive({ message: 'authorId must be a positive number' })
   @IsNotEmpty({ message: 'authorId is required' })
+  @Transform(({ value }) => parseInt(value, 10))
   authorId: number;
 }

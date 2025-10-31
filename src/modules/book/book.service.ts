@@ -5,6 +5,8 @@ import {
   Pagination,
   getPaginateData,
 } from '../../common/decorators/pagination.decorator';
+import { NotFoundWhileDeleteException } from '../../common/helpers/utils.helper';
+import { ERROR_MESSAGES } from '../../common/utils/custome-message';
 import { AuthorService } from '../author/author.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { FilterBookDto } from './dto/filter-book.dto';
@@ -90,7 +92,13 @@ export class BookService {
   }
 
   async remove(id: number): Promise<void> {
-    const book = await this.findOne(id);
+    const book = await this.bookRepository.findOneBy({ id });
+    if (!book) {
+      throw new NotFoundWhileDeleteException(
+        id,
+        ERROR_MESSAGES.BOOK_NOT_FOUND_DELETE,
+      );
+    }
     await this.bookRepository.softRemove(book);
   }
 }
