@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -8,6 +12,7 @@ import {
 import { NotFoundWhileDeleteException } from '../../common/helpers/utils.helper';
 import { ERROR_MESSAGES } from '../../common/utils/custome-message';
 import { AuthorService } from '../author/author.service';
+import { Author } from '../author/entities/author.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { FilterBookDto } from './dto/filter-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -18,13 +23,14 @@ export class BookService {
   constructor(
     @InjectRepository(Book)
     private readonly bookRepository: Repository<Book>,
+    @InjectRepository(Author)
+    private readonly authorRepository: Repository<Author>,
     private readonly authorService: AuthorService,
   ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
     // Verify author exists
-    await this.authorService.findOne(createBookDto.authorId);
-
+    await this.findBookAuthor(createBookDto.authorId);
     const book = this.bookRepository.create(createBookDto);
     const savedBook = await this.bookRepository.save(book);
 
@@ -80,7 +86,7 @@ export class BookService {
   async update(id: number, updateBookDto: UpdateBookDto): Promise<Book> {
     const book = await this.findOne(id);
 
-    // If authorId is being updated, verify the new author exists
+    //verify the new author exists
     if (updateBookDto.authorId) {
       await this.authorService.findOne(updateBookDto.authorId);
     }
@@ -99,6 +105,19 @@ export class BookService {
         ERROR_MESSAGES.BOOK_NOT_FOUND_DELETE,
       );
     }
-    await this.bookRepository.softRemove(book);
+
+    await this.bookRepository.delete({ id });
+  }
+
+  async findBookAuthor(authorId: number): Promise<Author> {
+    const author = await this.authorRepository.findOne({
+      where: { id: authorId },
+    });
+
+    if (!author) {
+      throw new BadRequestException(`Author with ID ${authorId} not found`);
+    }
+
+    return author;
   }
 }

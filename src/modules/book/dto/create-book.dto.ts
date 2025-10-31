@@ -19,7 +19,6 @@ export class CreateBookDto {
     message: 'isbn must be a valid ISBN format (e.g., 978-3-16-148410-0)',
   })
   @IsNotEmpty({ message: 'isbn is required' })
-  @MaxLength(255, { message: 'isbn must not exceed 255 characters' })
   isbn: string;
 
   @IsDateString(

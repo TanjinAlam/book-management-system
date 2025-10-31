@@ -1,4 +1,9 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  HttpStatus,
+  INestApplication,
+  UnprocessableEntityException,
+  ValidationPipe,
+} from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -49,8 +54,9 @@ describe('BookController (e2e)', () => {
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
-        forbidNonWhitelisted: false, // Allow extra query parameters like page/limit
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         transform: true,
+        exceptionFactory: (errors) => new UnprocessableEntityException(errors),
       }),
     );
 
@@ -121,9 +127,9 @@ describe('BookController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/books')
         .send(invalidBookDto)
-        .expect(400);
+        .expect(422);
 
-      expect(response.body.statusCode).toBe(400);
+      expect(response.body.statusCode).toBe(422);
       expect(response.body.message).toBeDefined();
     });
 
@@ -137,9 +143,9 @@ describe('BookController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/books')
         .send(invalidBookDto)
-        .expect(400);
+        .expect(422);
 
-      expect(response.body.statusCode).toBe(400);
+      expect(response.body.statusCode).toBe(422);
       expect(response.body.message).toBeDefined();
     });
 
@@ -172,7 +178,7 @@ describe('BookController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/books')
         .send(invalidBookDto)
-        .expect(404);
+        .expect(400);
     });
   });
 
@@ -337,7 +343,7 @@ describe('BookController (e2e)', () => {
       await request(app.getHttpServer())
         .patch(`/books/${bookId}`)
         .send(updateBookDto)
-        .expect(400);
+        .expect(422);
     });
   });
 
@@ -375,8 +381,7 @@ describe('BookController (e2e)', () => {
     });
   });
 });
-// Delete author will also delete subsequently created books due to cascade
-
+// Delete author will also delete subsequently books due to cascade
 describe('Author Deletion Cascade (e2e)', () => {
   let app: INestApplication<App>;
   let testAuthorId: number;
@@ -393,8 +398,9 @@ describe('Author Deletion Cascade (e2e)', () => {
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
-        forbidNonWhitelisted: false, // Allow extra query parameters like page/limit
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         transform: true,
+        exceptionFactory: (errors) => new UnprocessableEntityException(errors),
       }),
     );
 
