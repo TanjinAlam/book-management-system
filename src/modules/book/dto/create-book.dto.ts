@@ -15,7 +15,8 @@ export class CreateBookDto {
   @MaxLength(255, { message: 'title must not exceed 255 characters' })
   title: string;
 
-  @IsISBN(undefined, {
+  // support isbn-13 format
+  @IsISBN(13, {
     message: 'isbn must be a valid ISBN format (e.g., 978-3-16-148410-0)',
   })
   @IsNotEmpty({ message: 'isbn is required' })
@@ -32,12 +33,12 @@ export class CreateBookDto {
   publishedDate?: string;
 
   @IsOptional()
-  @IsString({ message: 'genre must be a string' })
   @MaxLength(100, { message: 'genre must not exceed 100 characters' })
+  @IsString({ message: 'genre must be a string' })
   genre?: string;
 
   @IsPositive({ message: 'authorId must be a positive number' })
-  @IsNotEmpty({ message: 'authorId is required' })
   @Transform(({ value }) => parseInt(value, 10))
+  @IsNotEmpty({ message: 'authorId is required' })
   authorId: number;
 }
