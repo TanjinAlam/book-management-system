@@ -2,6 +2,69 @@
 
 A comprehensive NestJS-based book management system with TypeORM, PostgreSQL, and full CRUD operations for authors and books.
 
+## Technologies Used
+
+- **NestJS** - Progressive Node.js framework
+- **TypeORM** - TypeScript ORM for database operations
+- **PostgreSQL** - Primary database
+- **class-validator** - Input validation
+- **class-transformer** - Object transformation
+- **Jest** - Testing framework
+- **Supertest** - HTTP endpoint testing
+
+## Why PostgreSQL?
+
+PostgreSQL was chosen as the primary database for this project because it perfectly combines reliability, flexibility, and strong typing — making it an excellent match for our TypeScript and NestJS stack.
+
+### Open-Source and Community Support
+
+- **Vibrant ecosystem**: PostgreSQL has a massive open-source community that continuously develops tools, extensions, and documentation.
+- **NestJS + TypeORM synergy**: Countless open-source tutorials, libraries, and example projects exist, making troubleshooting and scaling easier.
+- **Long-term reliability**: Enterprise-grade support and extensive documentation ensure your project can grow without hitting dead ends.
+
+### 1. Strong Typing and Schema Alignment
+
+PostgreSQL's powerful type system works seamlessly with TypeScript and NestJS.
+
+- **Rich data types**: JSON/JSONB, arrays, UUIDs, enums, and more map directly to TypeScript interfaces.
+- **Type safety**: Strict type enforcement prevents data corruption and ensures our database stays in sync with application models.
+- **Schema validation**: PostgreSQL's schema rules complement NestJS and TypeScript's compile-time checks for reliable, predictable data.
+
+### 2. Data Integrity & ACID Compliance
+
+- **Transactional consistency**: Full ACID compliance guarantees data consistency, especially for complex relationships like books and authors.
+- **Referential integrity**: Foreign keys ensure relationships remain valid.
+
+### 3. Advanced & Flexible Features
+
+PostgreSQL offers a wide range of modern database features:
+
+- **JSON/JSONB support**: Store complex metadata efficiently.
+- **Full-text search**: Built-in search for titles, authors, and metadata.
+- **Indexing & concurrency**: Multiple indexing strategies and excellent handling of simultaneous read/write operations.
+- **Extensible ecosystem**: Supports extensions for geolocation (PostGIS), time-series data (TimescaleDB), and vector/AI search (pgvector) — ready for advanced future features.
+
+### 4. Perfect Fit with NestJS and TypeORM
+
+- **Seamless integration**: NestJS with TypeORM works naturally with PostgreSQL, letting you define entities via decorators in a type-safe way.
+- **Safe migrations**: TypeORM migrations keep your schema evolution smooth and reliable.
+- **Type-safe queries**: Query builders leverage PostgreSQL's advanced SQL features without sacrificing type safety.
+- **Developer productivity**: This combination accelerates development while reducing runtime errors.
+
+### 5. Production-Ready and Scalable
+
+- **Performance**: Optimized for heavy workloads and complex queries.
+- **Scalability**: Supports vertical scaling (bigger servers) and horizontal scaling (replication, sharding).
+- **Reliability**: Battle-tested in production environments for decades.
+
+### 6. Smooth Developer Experience
+
+- **Cross-platform consistency**: Works the same across Linux, macOS, and Windows.
+- **Docker-ready**: Easy to containerize for development or deployment.
+- **Rich tooling**: A vast ecosystem of extensions and developer tools boosts productivity.
+
+This combination of strong typing, reliability, and feature richness makes PostgreSQL an ideal choice for a book management system that requires data integrity, performance, and maintainability.
+
 ## Features
 
 - **Authors Management**: Create, read, update, delete authors
@@ -276,24 +339,6 @@ All API responses follow a consistent format:
 - `yarn test` - Run unit tests
 - `yarn test:cov` - Run tests with coverage
 - `yarn test:e2e` - Run e2e tests
-
-## Technologies Used
-
-- **NestJS** - Progressive Node.js framework
-- **TypeORM** - TypeScript ORM for database operations
-- **PostgreSQL** - Primary database
-- **class-validator** - Input validation
-- **class-transformer** - Object transformation
-- **Jest** - Testing framework
-- **Supertest** - HTTP endpoint testing
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `yarn test && yarn test:e2e`
-5. Submit a pull request
 
 ## License
 
