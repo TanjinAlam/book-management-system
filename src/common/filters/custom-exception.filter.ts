@@ -65,12 +65,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       // PostgreSQL unique constraint violation
       if (pgError.code === '23505') {
         statusCode = HttpStatus.CONFLICT;
-        message = 'Duplicate entry found';
 
         // Extract field name from constraint or detail
         const detail = pgError.detail || '';
         const match = detail.match(/Key \((.*?)\)=/);
         const field = match ? match[1] : pgError.constraint || 'field';
+
+        message = `Conflict for unique constraints like ${field}`;
 
         error = `${field} already exists`;
       }
@@ -109,7 +110,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
     // Handle NestJS HttpException
     else if (exception instanceof HttpException) {
-      statusCode = exception.getStatus();
+      statusCode = exception.getStatus(); // Use the original status code
       const exceptionResponse = exception.getResponse();
 
       if (typeof exceptionResponse === 'string') {
@@ -143,7 +144,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
               }
             });
 
-            message = 'Validation failed';
+            message = 'Bad Request due to validation';
             error = errorMessages;
           } else {
             // Simple string array

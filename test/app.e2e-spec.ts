@@ -1,14 +1,10 @@
-import {
-  HttpStatus,
-  INestApplication,
-  UnprocessableEntityException,
-  ValidationPipe,
-} from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AllExceptionsFilter } from '../src/common/filters/custom-exception.filter';
+import { CustomValidationPipe } from '../src/common/pipes/custom-validation.pipe';
 import { AppModule } from './../src/app.module';
 
 /**
@@ -51,14 +47,7 @@ describe('BookController (e2e)', () => {
     app = moduleFixture.createNestApplication();
 
     // Apply the same validation pipe as in main.ts
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        transform: true,
-        exceptionFactory: (errors) => new UnprocessableEntityException(errors),
-      }),
-    );
+    app.useGlobalPipes(new CustomValidationPipe());
 
     // Apply the same global exception filter as in main.ts
     const httpAdapterHost = app.get(HttpAdapterHost);
@@ -127,10 +116,10 @@ describe('BookController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/books')
         .send(invalidBookDto)
-        .expect(422);
+        .expect(400);
 
-      expect(response.body.statusCode).toBe(422);
-      expect(response.body.message).toBeDefined();
+      expect(response.body.statusCode).toBe(400);
+      expect(response.body.message).toBe('Bad Request due to validation');
     });
 
     it('should fail when ISBN format is invalid', async () => {
@@ -143,10 +132,10 @@ describe('BookController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/books')
         .send(invalidBookDto)
-        .expect(422);
+        .expect(400);
 
-      expect(response.body.statusCode).toBe(422);
-      expect(response.body.message).toBeDefined();
+      expect(response.body.statusCode).toBe(400);
+      expect(response.body.message).toBe('Bad Request due to validation');
     });
 
     it('should create book with minimal required fields', async () => {
@@ -179,6 +168,40 @@ describe('BookController (e2e)', () => {
         .post('/books')
         .send(invalidBookDto)
         .expect(400);
+    });
+
+    it('should fail when ISBN already exists (unique constraint)', async () => {
+      const duplicateISBN = generateUniqueISBN();
+
+      // Create first book with the ISBN
+      const firstBookDto = {
+        title: 'First Book',
+        isbn: duplicateISBN,
+        authorId: testAuthorId,
+      };
+
+      await request(app.getHttpServer())
+        .post('/books')
+        .send(firstBookDto)
+        .expect(201);
+
+      // Try to create second book with the same ISBN
+      const secondBookDto = {
+        title: 'Second Book',
+        isbn: duplicateISBN, // Same ISBN
+        authorId: testAuthorId,
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/books')
+        .send(secondBookDto)
+        .expect(409);
+
+      expect(response.body.statusCode).toBe(409);
+      expect(response.body.message).toBe(
+        'Conflict for unique constraints like isbn',
+      );
+      expect(response.body.error).toBe('isbn already exists');
     });
   });
 
@@ -272,7 +295,11 @@ describe('BookController (e2e)', () => {
     });
 
     it('should return 400 for invalid id format', async () => {
-      await request(app.getHttpServer()).get('/books/invalid-id').expect(400);
+      const response = await request(app.getHttpServer())
+        .get('/books/invalid-id')
+        .expect(400);
+
+      expect(response.body.message).toBe('Bad Request due to validation');
     });
   });
 
@@ -340,10 +367,25 @@ describe('BookController (e2e)', () => {
         isbn: 'invalid-isbn-format',
       };
 
-      await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .patch(`/books/${bookId}`)
         .send(updateBookDto)
-        .expect(422);
+        .expect(400);
+
+      expect(response.body.message).toBe('Bad Request due to validation');
+    });
+
+    it('should return 400 for invalid id format in PATCH', async () => {
+      const updateBookDto = {
+        title: 'Updated Title',
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch('/books/invalid-id')
+        .send(updateBookDto)
+        .expect(400);
+
+      expect(response.body.message).toBe('Bad Request due to validation');
     });
   });
 
@@ -375,9 +417,11 @@ describe('BookController (e2e)', () => {
     });
 
     it('should return 400 for invalid id format', async () => {
-      await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .delete('/books/invalid-id')
         .expect(400);
+
+      expect(response.body.message).toBe('Bad Request due to validation');
     });
   });
 });
@@ -395,14 +439,7 @@ describe('Author Deletion Cascade (e2e)', () => {
     app = moduleFixture.createNestApplication();
 
     // Apply the same validation pipe as in main.ts
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        transform: true,
-        exceptionFactory: (errors) => new UnprocessableEntityException(errors),
-      }),
-    );
+    app.useGlobalPipes(new CustomValidationPipe());
 
     // Apply the same global exception filter as in main.ts
     const httpAdapterHost = app.get(HttpAdapterHost);

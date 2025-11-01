@@ -6,7 +6,6 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -16,6 +15,7 @@ import type {
   Pagination,
 } from '../../common/decorators/pagination.decorator';
 import { PaginationParams } from '../../common/decorators/pagination.decorator';
+import { CustomParseIntPipe } from '../../common/pipes/custom-parse-int.pipe';
 import { AuthorService } from './author.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { FilterAuthorDto } from './dto/filter-author.dto';
@@ -43,14 +43,14 @@ export class AuthorController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Author> {
+  async findOne(@Param('id', CustomParseIntPipe) id: number): Promise<Author> {
     return await this.authorService.findOne(id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', CustomParseIntPipe) id: number,
     @Body() updateAuthorDto: UpdateAuthorDto,
   ): Promise<Author> {
     return await this.authorService.update(id, updateAuthorDto);
@@ -58,7 +58,7 @@ export class AuthorController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async remove(@Param('id', CustomParseIntPipe) id: number): Promise<void> {
     await this.authorService.remove(id);
   }
 }

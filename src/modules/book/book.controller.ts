@@ -6,7 +6,6 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -16,6 +15,7 @@ import type {
   Pagination,
 } from '../../common/decorators/pagination.decorator';
 import { PaginationParams } from '../../common/decorators/pagination.decorator';
+import { CustomParseIntPipe } from '../../common/pipes/custom-parse-int.pipe';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { FilterBookDto } from './dto/filter-book.dto';
@@ -43,14 +43,14 @@ export class BookController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Book> {
+  async findOne(@Param('id', CustomParseIntPipe) id: number): Promise<Book> {
     return await this.bookService.findOne(id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', CustomParseIntPipe) id: number,
     @Body() updateBookDto: UpdateBookDto,
   ): Promise<Book> {
     return await this.bookService.update(id, updateBookDto);
@@ -58,7 +58,7 @@ export class BookController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async remove(@Param('id', CustomParseIntPipe) id: number): Promise<void> {
     await this.bookService.remove(id);
   }
 }
