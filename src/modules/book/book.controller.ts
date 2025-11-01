@@ -15,6 +15,7 @@ import type {
   Pagination,
 } from '../../common/decorators/pagination.decorator';
 import { PaginationParams } from '../../common/decorators/pagination.decorator';
+import { ApiResponse } from '../../common/interfaces/api-response.interface';
 import { CustomParseIntPipe } from '../../common/pipes/custom-parse-int.pipe';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -28,8 +29,15 @@ export class BookController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createBookDto: CreateBookDto): Promise<Book> {
-    return await this.bookService.create(createBookDto);
+  async create(
+    @Body() createBookDto: CreateBookDto,
+  ): Promise<ApiResponse<Book>> {
+    return {
+      success: true,
+      statusCode: HttpStatus.CREATED,
+      message: 'Success',
+      data: await this.bookService.create(createBookDto),
+    };
   }
 
   @Get()
@@ -37,14 +45,27 @@ export class BookController {
   async findAll(
     @PaginationParams() pagination: Pagination,
     @Query() filterBookDto: FilterBookDto,
-  ): Promise<PaginatedResponse<Book>> {
-    return await this.bookService.findAll(pagination, filterBookDto);
+  ): Promise<ApiResponse<PaginatedResponse<Book>>> {
+    const result = await this.bookService.findAll(pagination, filterBookDto);
+    return {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: 'Success',
+      data: result,
+    };
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id', CustomParseIntPipe) id: number): Promise<Book> {
-    return await this.bookService.findOne(id);
+  async findOne(
+    @Param('id', CustomParseIntPipe) id: number,
+  ): Promise<ApiResponse<Book>> {
+    return {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: 'Success',
+      data: await this.bookService.findOne(id),
+    };
   }
 
   @Patch(':id')
@@ -52,8 +73,13 @@ export class BookController {
   async update(
     @Param('id', CustomParseIntPipe) id: number,
     @Body() updateBookDto: UpdateBookDto,
-  ): Promise<Book> {
-    return await this.bookService.update(id, updateBookDto);
+  ): Promise<ApiResponse<Book>> {
+    return {
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: 'Success',
+      data: await this.bookService.update(id, updateBookDto),
+    };
   }
 
   @Delete(':id')

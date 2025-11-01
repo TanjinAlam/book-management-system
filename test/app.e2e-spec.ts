@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AllExceptionsFilter } from '../src/common/filters/custom-exception.filter';
+import { ResponseInterceptor } from '../src/common/interceptors/response.interceptor';
 import { CustomValidationPipe } from '../src/common/pipes/custom-validation.pipe';
 import { AppModule } from './../src/app.module';
 
@@ -52,6 +53,9 @@ describe('BookController (e2e)', () => {
     // Apply the same global exception filter as in main.ts
     const httpAdapterHost = app.get(HttpAdapterHost);
     app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
+
+    // Apply the same response interceptor as in main.ts
+    app.useGlobalInterceptors(new ResponseInterceptor());
 
     await app.init();
 
@@ -444,6 +448,9 @@ describe('Author Deletion Cascade (e2e)', () => {
     // Apply the same global exception filter as in main.ts
     const httpAdapterHost = app.get(HttpAdapterHost);
     app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
+
+    // Apply the same response interceptor as in main.ts
+    app.useGlobalInterceptors(new ResponseInterceptor());
 
     await app.init();
 

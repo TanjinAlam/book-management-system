@@ -17,8 +17,7 @@ export class CustomValidationPipe
       errorHttpStatusCode: 400,
       transform: true,
       exceptionFactory: (errors) => {
-        console.log('Validation errors:', errors);
-
+        // console.log('Validation errors:', errors);
         // Extract constraint messages from validation errors
         const errorMessages: Record<string, string[]> = {};
 

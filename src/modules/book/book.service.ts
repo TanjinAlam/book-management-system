@@ -39,9 +39,7 @@ export class BookService {
   }
 
   async findAll(pagination: Pagination, query: FilterBookDto) {
-    const queryBuilder = this.bookRepository
-      .createQueryBuilder('book')
-      .leftJoinAndSelect('book.author', 'author');
+    const queryBuilder = this.bookRepository.createQueryBuilder('book');
 
     if (query.title) {
       queryBuilder.andWhere('book.title ILIKE :title', {
